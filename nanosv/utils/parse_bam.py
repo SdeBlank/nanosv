@@ -109,15 +109,17 @@ def parse_chr_bam(q, q_out, bamfile):
         segments_to_check = {}
         variants = {}
 
+
+        F=pysam.AlignmentFile(bamfile, 'rb')
+        Alignment = F.fetch(contig, multiple_iterators=True)
+        header = F.header
+         
         for item in header["SQ"]:
             if item['SN'] == contig:
                 variants[item['SN']] = {}
                 for bin in range(0,int(item['LN']/NanoSV.opts_variant_bin_size)):
                     variants[item['SN']][bin] = {}
-
-        F=pysam.AlignmentFile(bamfile, 'rb')
-        Alignment = F.fetch(contig, multiple_iterators=True)
-
+                    
         previous_refname = -1
         previous_cursor = -1
         for line in Alignment:
